@@ -1,0 +1,120 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Break Timer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <svg class="circle-timer" width="200" height="200">
+      <circle class="bg" cx="100" cy="100" r="90"/>
+      <circle class="progress" cx="100" cy="100" r="90"/>
+    </svg>
+    <div class="timer-label" id="label">Study</div>
+    <div class="time" id="time">50:00</div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+<style>body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f0f0f0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.circle-timer {
+  transform: rotate(-90deg);
+}
+
+circle {
+  fill: none;
+  stroke-width: 15;
+}
+
+.bg {
+  stroke: #eee;
+}
+
+.progress {
+  stroke: #00aaff;
+  stroke-dasharray: 565.48;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s linear;
+}
+
+.timer-label {
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  text-align: center;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.time {
+  position: absolute;
+  top: 55%;
+  width: 100%;
+  text-align: center;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+</style><script>const timeDisplay = document.getElementById("time");
+const label = document.getElementById("label");
+const progressCircle = document.querySelector(".progress");
+
+const RADIUS = 90;
+const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+
+progressCircle.style.strokeDasharray = CIRCUMFERENCE;
+
+let isStudy = true;
+let totalTime = 50 * 60; // initial study time in seconds
+let timeLeft = totalTime;
+
+function updateTimerDisplay() {
+  const mins = Math.floor(timeLeft / 60);
+  const secs = timeLeft % 60;
+  timeDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  
+  const progress = (timeLeft / totalTime) * CIRCUMFERENCE;
+  progressCircle.style.strokeDashoffset = CIRCUMFERENCE - progress;
+}
+
+function switchMode() {
+  isStudy = !isStudy;
+  totalTime = isStudy ? 50 * 60 : 10 * 60;
+  label.textContent = isStudy ? "Study" : "Break";
+  progressCircle.style.stroke = isStudy ? "#00aaff" : "#33cc33";
+  timeLeft = totalTime;
+  updateTimerDisplay();
+}
+
+function startTimer() {
+  updateTimerDisplay();
+
+  const interval = setInterval(() => {
+    timeLeft--;
+
+    updateTimerDisplay();
+
+    if (timeLeft <= 0) {
+      switchMode();
+    }
+  }, 1000);
+}
+
+startTimer();
+</script>
